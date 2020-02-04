@@ -209,9 +209,11 @@
         </div>
     </div>
 
+    <button id="previous">previous</button>
     <button id="next">next</button>
 
     <script>
+        let timeoutIds = [];
         let step = 0;
 
         const states = [
@@ -552,16 +554,26 @@
 
         document.getElementById("next")
             .addEventListener("click", () => {
-                step++;
-                const state = states[step % states.length];
-                killAnimations();
-                highlightLine(state.line);
-                setStack(state.stack);
-                setMemory(state.memory);
-                setLocal(state.local);
-
-                if (state.transition) state.transition();
+                step = (step + 1) % states.length;
+                doStep();
             });
+
+        document.getElementById("previous")
+            .addEventListener("click", () => {
+                if (step > 0) step--;
+                doStep();
+            });
+
+        function doStep() {
+            const state = states[step];
+            killAnimations();
+            highlightLine(state.line);
+            setStack(state.stack);
+            setMemory(state.memory);
+            setLocal(state.local);
+
+            if (state.transition) state.transition();
+        }
 
         function highlightLine(line) {
             const pres = document.querySelectorAll("#code pre");
@@ -587,11 +599,14 @@
             const spans = document.querySelectorAll("#memory-array div span");
             for (let i in values) {
                 spans[i].textContent = values[i];
+                spans[i].style.visibility = "visible";
             }
         }
 
         function setLocal(value) {
-            document.querySelector("#l0 span").textContent = value;
+            const span = document.querySelector("#l0 span");
+            span.textContent = value;
+            span.style.visibility = "visible";
         }
 
         function localToStack(index) {
@@ -640,9 +655,9 @@
                 work.classList.add("shown");
                 move(src1, dest1, true, true);
 
-                setTimeout(() => {
+                timeoutIds.push(setTimeout(() => {
                     move(src2, dest2, false, true);
-                }, 2500);
+                }, 2500));
             };
         }
 
@@ -674,9 +689,9 @@
                 move(src1, dest1, true, true);
                 move(src2, dest2, true, true);
 
-                setTimeout(() => {
+                timeoutIds.push(setTimeout(() => {
                     move(src3, dest3, true, true)
-                }, 2500)
+                }, 2500));
             };
         }
 
@@ -696,10 +711,10 @@
                 move(src1, dest1, true, true);
                 move(src2, dest2, true, true);
 
-                setTimeout(() => {
+                timeoutIds.push(setTimeout(() => {
                     src3.textContent = result;
                     move(src3, src1, true, true)
-                }, 2500);
+                }, 2500));
             }
         }
 
@@ -721,17 +736,16 @@
                     span.style.transform = `translate(${dest.offsetLeft}px, ${dest.offsetTop}px)`;
 
                     if (hideSrc) {
-                        setTimeout(() => src.style.visibility = "hidden", 500);
+                        timeoutIds.push(setTimeout(() => src.style.visibility = "hidden", 500));
                     }
 
-                    setTimeout(() => {
-                        span.style.opacity = "0";
+                    timeoutIds.push(setTimeout(() => {
+                        if (!span.isConnected) return;
                         if (setDest) {
-                            // dest.style.visibility = "visible";
                             dest.style.removeProperty("visibility");
                         }
-                        setTimeout(() => root.removeChild(span), 500);
-                    }, 2500);
+                        timeoutIds.push(setTimeout(() => root.removeChild(span), 500));
+                    }, 2500));
                 });
             });
         }
@@ -740,8 +754,11 @@
             const root = document.getElementById("layout");
             root.querySelectorAll(".anim").forEach(span => root.removeChild(span));
             root.querySelectorAll(".work").forEach(div => div.classList.remove("shown"));
+            timeoutIds.forEach(id => clearTimeout(id));
+            timeoutIds = [];
         }
     </script>
+
 </body>
 
 </html>
