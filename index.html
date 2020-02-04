@@ -18,6 +18,7 @@
             grid-row-gap: 12px;
             grid-template-columns: auto 1fr auto;
             grid-template-rows: auto auto 1fr;
+            position: relative;
             width: fit-content;
         }
 
@@ -79,12 +80,19 @@
         }
 
         #code {
+            display: grid;
             grid-column-start: 2;
             grid-column-end: 4;
+            grid-column-gap: 8px;
+            grid-template-columns: auto, 1fr;
         }
 
         pre {
             margin: 0;
+        }
+
+        #code div {
+            grid-column-start: 2;
         }
 
         .keyword {
@@ -106,6 +114,16 @@
         .highlight {
             background-color: var(--cell-bg-color);
             font-weight: bold;
+        }
+
+        .anim {
+            top: 0;
+            left: 0;
+            opacity: 0;
+            color: blue;
+            font-weight: bold;
+            position: absolute;
+            transition: transform 2s ease-in-out .5s, opacity .5s;
         }
     </style>
 </head>
@@ -140,7 +158,6 @@
             <div><span>&nbsp;</span></div>
             <div><span>&nbsp;</span></div>
             <div><span>&nbsp;</span></div>
-            <div><span>&nbsp;</span></div>
         </div>
         <div id="locals">
             <div class="label">$i</div>
@@ -148,28 +165,44 @@
         </div>
         <div id="code">
             <pre><span class="token keyword">loop</span> <span class="token variable">$loop</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>load8_u</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">1</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>add</span></pre>
+            <div class="work"><span class="input1">a</span> + <span class="input2">b</span></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>store8</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">1</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>add</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">local</span>.set <span class="token variable">$i</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">3</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>lt_u</span></pre>
+            <div class="work"></div>
             <pre>  <span class="token keyword">br_if</span> <span class="token variable">$loop</span></pre>
+            <div class="work"></div>
             <pre><span class="token keyword">end</span></pre>
+            <div class="work"></div>
         </div>
     </div>
 
     <button id="next">next</button>
 
     <script>
-        let step = -1;
+        let step = 0;
 
         const states = [
             // first loop
@@ -189,31 +222,36 @@
                 line: 2,
                 stack: [],
                 memory: [72, 65, 76],
-                local: 0
+                local: 0,
+                transition: localToStack(0)
             },
             {
                 line: 3,
                 stack: [0],
                 memory: [72, 65, 76],
-                local: 0
+                local: 0,
+                transition: localToStack(1)
             },
             {
                 line: 4,
                 stack: [0, 0],
                 memory: [72, 65, 76],
-                local: 0
+                local: 0,
+                transition: memoryToStack(0, 1)
             },
             {
                 line: 5,
                 stack: [0, 72],
                 memory: [72, 65, 76],
-                local: 0
+                local: 0,
+                transition: constToStack(5, 2)
             },
             {
                 line: 6,
                 stack: [0, 72, 1],
                 memory: [72, 65, 76],
-                local: 0
+                local: 0,
+                transition: add(6, 1, 2)
             },
             {
                 line: 7,
@@ -225,13 +263,15 @@
                 line: 8,
                 stack: [],
                 memory: [73, 65, 76],
-                local: 0
+                local: 0,
+                transition: constToStack(8, 0)
             },
             {
                 line: 9,
                 stack: [1],
                 memory: [73, 65, 76],
-                local: 0
+                local: 0,
+                transition: localToStack(1)
             },
             {
                 line: 10,
@@ -249,13 +289,15 @@
                 line: 12,
                 stack: [],
                 memory: [73, 65, 76],
-                local: 1
+                local: 1,
+                transition: localToStack(0)
             },
             {
                 line: 13,
                 stack: [1],
                 memory: [73, 65, 76],
-                local: 1
+                local: 1,
+                transition: constToStack(13, 1)
             },
             {
                 line: 14,
@@ -475,10 +517,13 @@
             .addEventListener("click", () => {
                 step++;
                 const state = states[step % states.length];
+                killAnimations();
                 highlightLine(state.line);
                 setStack(state.stack);
                 setMemory(state.memory);
                 setLocal(state.local);
+
+                if (state.transition) state.transition();
             });
 
         function highlightLine(line) {
@@ -510,6 +555,101 @@
 
         function setLocal(value) {
             document.querySelector("#l0 span").textContent = value;
+        }
+
+        function localToStack(index) {
+            return () => {
+                const src = document.querySelector("#l0 span");
+                const stack = document.querySelectorAll("#stack div span");
+                const dest = stack[stack.length - index - 1];
+
+                move(src, dest, false, true);
+            };
+        }
+
+        function memoryToStack(memoryIndex, stackIndex) {
+            return () => {
+                const memory = document.querySelectorAll("#memory-array div span");
+                const src = memory[memoryIndex];
+                const stack = document.querySelectorAll("#stack div span");
+                const dest = stack[stack.length - stackIndex - 1];
+
+                move(src, dest, false, true);
+            };
+        }
+
+        function constToStack(instruction, stackIndex) {
+            return () => {
+                const pres = document.querySelectorAll("#code pre");
+                const src = pres[instruction - 1].querySelector("span.number");
+                const stack = document.querySelectorAll("#stack div span");
+                const dest = stack[stack.length - stackIndex - 1];
+                // debugger;
+
+                move(src, dest, false, true);
+            };
+        }
+
+        function stackToMemory(stackIndex, memoryIndex) {
+            return () => {
+                const memory = document.querySelectorAll("#memory-array div span");
+                const dest = memory[memoryIndex];
+                const stack = document.querySelectorAll("#stack div span");
+                const src = stack[stack.length - stackIndex - 1];
+
+                move(src, dest, true, true);
+            };
+        }
+
+        function add(instruction, index1, index2) {
+            return () => {
+                const stack = document.querySelectorAll("#stack div span");
+                const src1 = stack[stack.length - index1 - 1];
+                const src2 = stack[stack.length - index2 - 1];
+                const work = document.querySelectorAll("#code .work")[instruction - 1];
+                const dest1 = work.querySelector(".input1");
+                const dest2 = work.querySelector(".input2");
+
+                move(src1, dest1, true, true);
+                move(src2, dest2, true, true);
+            }
+        }
+
+        function move(src, dest, hideSrc, setDest) {
+            const root = document.getElementById("layout");
+
+            const span = document.createElement("span");
+            span.classList.add("anim");
+            span.textContent = src.textContent;
+            span.style.transform = `translate(${src.offsetLeft}px, ${src.offsetTop}px)`;
+            root.appendChild(span);
+
+            dest.textContent = span.textContent
+            dest.style.visibility = "hidden";
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    span.style.opacity = "1";
+                    span.style.transform = `translate(${dest.offsetLeft}px, ${dest.offsetTop}px)`;
+
+                    if (hideSrc) {
+                        setTimeout(() => src.style.visibility = "hidden", 500);
+                    }
+
+                    setTimeout(() => {
+                        span.style.opacity = "0";
+                        if (setDest) {
+                            dest.style.visibility = "visible";
+                        }
+                        setTimeout(() => root.removeChild(span), 500);
+                    }, 2500);
+                });
+            });
+        }
+
+        function killAnimations() {
+            const root = document.getElementById("layout");
+            root.querySelectorAll(".anim").forEach(span => root.removeChild(span));
         }
     </script>
 </body>
