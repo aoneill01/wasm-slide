@@ -171,102 +171,345 @@
     <script>
         let step = -1;
 
-        let steps = [
-            compose(highlightLine(0), setStack([]), setMemory(0, 72), setMemory(1, 65), setMemory(2, 76), setLocal(0)),
-            highlightLine(1),
-            compose(highlightLine(2), setStack([0])),
-            compose(highlightLine(3), setStack([0, 0])),
-            compose(highlightLine(4), setStack([0, 72])),
-            compose(highlightLine(5), setStack([0, 72, 1])),
-            compose(highlightLine(6), setStack([0, 73])),
-            compose(highlightLine(7), setStack([]), setMemory(0, 73)),
-            compose(highlightLine(8), setStack([1])),
-            compose(highlightLine(9), setStack([1, 0])),
-            compose(highlightLine(10), setStack([1])),
-            compose(highlightLine(11), setStack([]), setLocal(1)),
-            compose(highlightLine(12), setStack([1])),
-            compose(highlightLine(13), setStack([1, 3])),
-            compose(highlightLine(14), setStack([1])),
-            compose(highlightLine(15), setStack([])),
-            highlightLine(1),
-            compose(highlightLine(2), setStack([1])),
-            compose(highlightLine(3), setStack([1, 1])),
-            compose(highlightLine(4), setStack([1, 65])),
-            compose(highlightLine(5), setStack([1, 65, 1])),
-            compose(highlightLine(6), setStack([1, 66])),
-            compose(highlightLine(7), setStack([]), setMemory(1, 66)),
-            compose(highlightLine(8), setStack([1])),
-            compose(highlightLine(9), setStack([1, 1])),
-            compose(highlightLine(10), setStack([2])),
-            compose(highlightLine(11), setStack([]), setLocal(2)),
-            compose(highlightLine(12), setStack([2])),
-            compose(highlightLine(13), setStack([2, 3])),
-            compose(highlightLine(14), setStack([1])),
-            compose(highlightLine(15), setStack([])),
-            highlightLine(1),
-            compose(highlightLine(2), setStack([2])),
-            compose(highlightLine(3), setStack([2, 2])),
-            compose(highlightLine(4), setStack([2, 76])),
-            compose(highlightLine(5), setStack([2, 76, 1])),
-            compose(highlightLine(6), setStack([2, 77])),
-            compose(highlightLine(7), setStack([]), setMemory(2, 77)),
-            compose(highlightLine(8), setStack([1])),
-            compose(highlightLine(9), setStack([1, 2])),
-            compose(highlightLine(10), setStack([3])),
-            compose(highlightLine(11), setStack([]), setLocal(3)),
-            compose(highlightLine(12), setStack([3])),
-            compose(highlightLine(13), setStack([3, 3])),
-            compose(highlightLine(14), setStack([0])),
-            compose(highlightLine(15), setStack([])),
-            highlightLine(16),
-            compose(highlightLine(0), setMemory(0, "I"), setMemory(1, "B"), setMemory(2, "M")),
-            compose(setMemory(0, "H"), setMemory(1, "A"), setMemory(2, "L"), setLocal(0))
+        const states = [
+            // first loop
+            {
+                line: null,
+                stack: [],
+                memory: ["H", "A", "L"],
+                local: 0
+            },
+            {
+                line: 1,
+                stack: [],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 2,
+                stack: [],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 3,
+                stack: [0],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 4,
+                stack: [0, 0],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 5,
+                stack: [0, 72],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 6,
+                stack: [0, 72, 1],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 7,
+                stack: [0, 73],
+                memory: [72, 65, 76],
+                local: 0
+            },
+            {
+                line: 8,
+                stack: [],
+                memory: [73, 65, 76],
+                local: 0
+            },
+            {
+                line: 9,
+                stack: [1],
+                memory: [73, 65, 76],
+                local: 0
+            },
+            {
+                line: 10,
+                stack: [1, 0],
+                memory: [73, 65, 76],
+                local: 0
+            },
+            {
+                line: 11,
+                stack: [1],
+                memory: [73, 65, 76],
+                local: 0
+            },
+            {
+                line: 12,
+                stack: [],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 13,
+                stack: [1],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 14,
+                stack: [1, 3],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 15,
+                stack: [1],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 1,
+                stack: [],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            // second loop
+            {
+                line: 2,
+                stack: [],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 3,
+                stack: [1],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 4,
+                stack: [1, 1],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 5,
+                stack: [1, 65],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 6,
+                stack: [1, 65, 1],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 7,
+                stack: [1, 66],
+                memory: [73, 65, 76],
+                local: 1
+            },
+            {
+                line: 8,
+                stack: [],
+                memory: [73, 66, 76],
+                local: 1
+            },
+            {
+                line: 9,
+                stack: [1],
+                memory: [73, 66, 76],
+                local: 1
+            },
+            {
+                line: 10,
+                stack: [1, 1],
+                memory: [73, 66, 76],
+                local: 1
+            },
+            {
+                line: 11,
+                stack: [2],
+                memory: [73, 66, 76],
+                local: 1
+            },
+            {
+                line: 12,
+                stack: [],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 13,
+                stack: [2],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 14,
+                stack: [2, 3],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 15,
+                stack: [1],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 1,
+                stack: [],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            // third loop
+            {
+                line: 2,
+                stack: [],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 3,
+                stack: [2],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 4,
+                stack: [2, 2],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 5,
+                stack: [1, 76],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 6,
+                stack: [1, 76, 1],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 7,
+                stack: [1, 77],
+                memory: [73, 66, 76],
+                local: 2
+            },
+            {
+                line: 8,
+                stack: [],
+                memory: [73, 66, 77],
+                local: 2
+            },
+            {
+                line: 9,
+                stack: [1],
+                memory: [73, 66, 77],
+                local: 2
+            },
+            {
+                line: 10,
+                stack: [1, 2],
+                memory: [73, 66, 77],
+                local: 2
+            },
+            {
+                line: 11,
+                stack: [3],
+                memory: [73, 66, 77],
+                local: 2
+            },
+            {
+                line: 12,
+                stack: [],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: 13,
+                stack: [3],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: 14,
+                stack: [3, 3],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: 15,
+                stack: [0],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: 16,
+                stack: [],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: null,
+                stack: [],
+                memory: [73, 66, 77],
+                local: 3
+            },
+            {
+                line: null,
+                stack: [],
+                memory: ["I", "B", "M"],
+                local: 3
+            }
         ];
 
         document.getElementById("next")
             .addEventListener("click", () => {
                 step++;
-                steps[step % steps.length]();
+                const state = states[step % states.length];
+                highlightLine(state.line);
+                setStack(state.stack);
+                setMemory(state.memory);
+                setLocal(state.local);
             });
 
         function highlightLine(line) {
-            return () => {
-                const pres = document.querySelectorAll("#code pre");
-                for (let pre of pres) {
-                    pre.classList.remove("highlight");
-                }
-
-                if (line) pres[line - 1].classList.add("highlight");
+            const pres = document.querySelectorAll("#code pre");
+            for (let pre of pres) {
+                pre.classList.remove("highlight");
             }
+
+            if (line) pres[line - 1].classList.add("highlight");
         }
 
         function setStack(values) {
-            return () => {
-                const spans = document.querySelectorAll("#stack div span");
-                for (let span of spans) {
-                    span.style.visibility = "hidden";
-                }
-                for (let i in values) {
-                    spans[spans.length - i - 1].textContent = values[i];
-                    spans[spans.length - i - 1].style.visibility = "visible";
-                }
+            const spans = document.querySelectorAll("#stack div span");
+            for (let span of spans) {
+                span.style.visibility = "hidden";
+            }
+            for (let i in values) {
+                spans[spans.length - i - 1].textContent = values[i];
+                spans[spans.length - i - 1].style.visibility = "visible";
             }
         }
 
-        function setMemory(index, value) {
-            return () => {
-                document.querySelectorAll("#memory-array div span")[index].textContent = value;
-            };
+        function setMemory(values) {
+            const spans = document.querySelectorAll("#memory-array div span");
+            for (let i in values) {
+                spans[i].textContent = values[i];
+            }
         }
 
         function setLocal(value) {
-            return () => {
-                document.querySelector("#l0 span").textContent = value;
-            }
-        }
-
-        function compose(...actions) {
-            return () => actions.forEach(action => action());
+            document.querySelector("#l0 span").textContent = value;
         }
     </script>
 </body>
