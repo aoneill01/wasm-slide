@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WASM Slide</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap" rel="stylesheet">
     <style>
         :root {
             --cell-bg-color: #def;
@@ -14,12 +15,13 @@
 
         #layout {
             display: grid;
-            font-family: monospace;
+            font-family: 'Source Code Pro', monospace;
             grid-column-gap: 12px;
             grid-row-gap: 12px;
             grid-template-columns: auto auto 1fr;
             grid-template-rows: auto auto 1fr;
             position: relative;
+            width: -moz-fit-content;
             width: fit-content;
         }
 
@@ -84,11 +86,12 @@
             display: grid;
             grid-column-start: 2;
             grid-column-end: 4;
-            grid-column-gap: 8px;
+            grid-column-gap: 12px;
             grid-template-columns: auto, 1fr;
         }
 
         pre {
+            font-family: 'Source Code Pro', monospace;
             margin: 0;
         }
 
