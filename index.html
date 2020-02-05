@@ -10,7 +10,11 @@
     <style>
         :root {
             --cell-bg-color: #def;
+            --highlight-rgb: 221, 238, 255;
             --unemphasized-color: #999;
+            --accent1-color: #07a;
+            --accent2-color: #e90;
+            --accent3-color: #905;
         }
 
         #layout {
@@ -87,52 +91,62 @@
             grid-column-start: 2;
             grid-column-end: 4;
             grid-column-gap: 12px;
-            grid-template-columns: auto, 1fr;
+            grid-template-columns: auto, auto, 1fr;
         }
 
         pre {
+            background-color: rgba(var(--highlight-rgb), 0);
             font-family: 'Source Code Pro', monospace;
+            grid-column-start: 2;
             margin: 0;
+            padding: 0 4px;
+            transition: background-color .5s;
+        }
+
+        .enc {
+            color: var(--unemphasized-color);
+            text-align: right;
         }
 
         .work {
-            grid-column-start: 2;
+            grid-column-start: 3;
             color: var(--unemphasized-color);
-            visibility: hidden;
+            opacity: 0;
+            transition: opacity .5s;
         }
 
         .shown {
-            visibility: visible;
+            opacity: 1;
         }
 
         .keyword {
-            color: #07a;
+            color: var(--accent1-color);
         }
 
         .punctuation {
-            color: #999;
+            color: var(--unemphasized-color);
         }
 
         .variable {
-            color: #e90;
+            color: var(--accent2-color);
         }
 
         .number {
-            color: #905;
+            color: var(--accent3-color);
         }
 
         .highlight {
-            background-color: var(--cell-bg-color);
+            background-color: rgb(var(--highlight-rgb));
             font-weight: bold;
         }
 
         .anim {
-            top: 0;
+            color: var(--accent1-color);
+            font-weight: bold;
             left: 0;
             opacity: 0;
-            color: blue;
-            font-weight: bold;
             position: absolute;
+            top: 0;
             transition: transform 2s ease-in-out .5s, opacity .5s;
         }
     </style>
@@ -174,43 +188,62 @@
             <div id="l0" class="local-value"><span>0</span></div>
         </div>
         <div id="code">
+            <div class="enc">03 40</div>
             <pre><span class="token keyword">loop</span> <span class="token variable">$loop</span></pre>
             <div class="work"></div>
+            <div class="enc">20 00</div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
             <div class="work"></div>
+            <div class="enc">20 00</div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
             <div class="work"></div>
+            <div class="enc">2D 00 00</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>load8_u</span></pre>
             <div class="work">memory[<span class="target1">0</span>]</div>
+            <div class="enc">41 01</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">1</span></pre>
             <div class="work"></div>
+            <div class="enc">6A</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>add</span></pre>
-            <div class="work"><span class="target1">0</span> + <span class="target2">0</span> = <span class="target3">&nbsp;</span></div>
+            <div class="work"><span class="target1">0</span> + <span class="target2">0</span> = <span
+                    class="target3">&nbsp;</span></div>
+            <div class="enc">3A 00 00</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>store8</span></pre>
             <div class="work">memory[<span class="target1">0</span>] ← <span class="target2">0</span></div>
+            <div class="enc">41 01</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">1</span></pre>
             <div class="work"></div>
+            <div class="enc">20 00</div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
             <div class="work"></div>
+            <div class="enc">6A</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>add</span></pre>
-            <div class="work"><span class="target1">0</span> + <span class="target2">0</span> = <span class="target3">&nbsp;</span></div>
+            <div class="work"><span class="target1">0</span> + <span class="target2">0</span> = <span
+                    class="target3">&nbsp;</span></div>
+            <div class="enc">21 00</div>
             <pre>  <span class="token keyword">local</span>.set <span class="token variable">$i</span></pre>
             <div class="work"></div>
+            <div class="enc">20 00</div>
             <pre>  <span class="token keyword">local</span>.get <span class="token variable">$i</span></pre>
             <div class="work"></div>
+            <div class="enc">41 03</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>const</span> <span class="token number">3</span></pre>
             <div class="work"></div>
+            <div class="enc">49</div>
             <pre>  <span class="token keyword">i32<span class="token punctuation">.</span>lt_u</span></pre>
-            <div class="work"><span class="target1">0</span> &lt; <span class="target2">0</span> = <span class="target3">0</span></div>
+            <div class="work"><span class="target1">0</span> &lt; <span class="target2">0</span> = <span
+                    class="target3">0</span></div>
+            <div class="enc">0D 00</div>
             <pre>  <span class="token keyword">br_if</span> <span class="token variable">$loop</span></pre>
             <div class="work"><span class="target1">0</span> ≠ 0</div>
+            <div class="enc">0B</div>
             <pre><span class="token keyword">end</span></pre>
             <div class="work"></div>
         </div>
     </div>
 
-    <button id="previous">previous</button>
-    <button id="next">next</button>
+    <button id="previous">←</button>
+    <button id="next">→</button>
 
     <script>
         let timeoutIds = [];
@@ -463,21 +496,21 @@
             },
             {
                 line: 5,
-                stack: [1, 76],
+                stack: [2, 76],
                 memory: [73, 66, 76],
                 local: 2,
                 transition: constToStack(5, 2)
             },
             {
                 line: 6,
-                stack: [1, 76, 1],
+                stack: [2, 76, 1],
                 memory: [73, 66, 76],
                 local: 2,
                 transition: op(6, 1, 2, 77)
             },
             {
                 line: 7,
-                stack: [1, 77],
+                stack: [2, 77],
                 memory: [73, 66, 76],
                 local: 2,
                 transition: stackToMemory(7, 0, 1, 2)
@@ -552,17 +585,22 @@
             }
         ];
 
-        document.getElementById("next")
-            .addEventListener("click", () => {
-                step = (step + 1) % states.length;
-                doStep();
-            });
+        document.getElementById("next").addEventListener("click", next);
+        document.getElementById("previous").addEventListener("click", previous);
+        document.addEventListener("keydown", event => {
+            if (event.key === "ArrowLeft") previous();
+            if (event.key === "ArrowRight" || event.key === " ") next();
+        })
 
-        document.getElementById("previous")
-            .addEventListener("click", () => {
-                if (step > 0) step--;
-                doStep();
-            });
+        function next() {
+            step = (step + 1) % states.length;
+            doStep();
+        }
+
+        function previous() {
+            if (step > 0) step--;
+            doStep();
+        }
 
         function doStep() {
             const state = states[step];
@@ -740,7 +778,7 @@
                     }
 
                     timeoutIds.push(setTimeout(() => {
-                        if (!span.isConnected) return;
+                        span.style.opacity = "0";
                         if (setDest) {
                             dest.style.removeProperty("visibility");
                         }
