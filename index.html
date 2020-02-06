@@ -40,7 +40,7 @@
 
         #memory-array {
             display: grid;
-            grid-template-columns: repeat(6, 30px);
+            grid-template-columns: repeat(7, 30px);
             text-align: center;
         }
 
@@ -58,6 +58,10 @@
             background-color: var(--cell-bg-color);
             margin-right: 2px;
             padding: 4px 0;
+        }
+
+        #contents-wrapper>div:nth-child(n+4) {
+            color: var(--unemphasized-color);
         }
 
         #stack {
@@ -164,6 +168,7 @@
                     <div>0</div>
                     <div>0</div>
                     <div>0</div>
+                    <div>…</div>
                 </div>
                 <div id="index-wrapper">
                     <div>0</div>
@@ -172,6 +177,7 @@
                     <div>3</div>
                     <div>4</div>
                     <div>5</div>
+                    <div> </div>
                 </div>
             </div>
         </div>
